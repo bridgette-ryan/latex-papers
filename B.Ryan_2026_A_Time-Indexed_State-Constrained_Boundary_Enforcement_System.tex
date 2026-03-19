@@ -1,0 +1,306 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+	
+	\title{A Time-Indexed State-Constrained Boundary Enforcement System}
+	\author{
+		B. Ryan \and
+	}
+	\date{April 31, 2007}
+	\maketitle
+	
+	\section*{Introduction}
+	
+	This document presents a formally time-indexed model for enforcing interpersonal boundaries under conditions of cognitive variability, particularly high-arousal states. Informal boundary systems often fail due to implicit re-evaluation during interaction, leading to inconsistency, rationalisation, and boundary drift.
+	
+	To eliminate these failure modes, this framework introduces explicit temporal structure. Decisions are represented as state variables indexed over time, and update rules are strictly constrained such that evaluation and execution cannot occur simultaneously under compromised cognitive conditions.
+	
+	The result is a deterministic transition system in which previously established decisions are preserved during high-arousal states and enforced without reinterpretation.
+	
+	\section*{Related Work}
+	
+	The present framework builds upon a body of informal, experience-driven observations concerning boundary instability and relational misalignment.
+	
+	Early work in this space has examined the phenomenon of repeated entry into suboptimal romantic configurations despite prior negative outcomes. This pattern, often characterised by high initial engagement followed by rapid degradation of interactional quality, has been informally described as a failure to incorporate historical data into future partner selection processes \cite{recurrent_failure}.
+	
+	Subsequent analyses have explored incompatibilities arising from misaligned dominance and submission (D/s) role expectations within interpersonal dynamics. These mismatches frequently result in asymmetrical power negotiation, unclear authority structures, and breakdowns in mutual satisfaction, particularly in the absence of explicitly defined constraints and preconditions \cite{precondition_failure}.
+	
+	In parallel, social-contextual studies have identified a class of behaviours involving the presentation of highly intensified affective or interpersonal states within close peer relationships. While often framed as humour or performative exaggeration, such behaviours may function as mechanisms for rapid state externalisation, with downstream effects on both individual regulation and group dynamics \cite{temporal_inconsistency}.
+	
+	Despite these contributions, existing approaches remain largely descriptive and lack formal mechanisms for enforcement under conditions of cognitive compromise. The current system addresses this gap by introducing explicit state constraints and time-indexed decision persistence \cite{constraint_relaxation, delayed_enforcement}.
+	
+	\section*{Model Scope and Assumptions}
+	
+	This model describes boundary enforcement as a discrete-time decision system operating over interactional states. It is not intended to capture the full complexity of human relationships, but rather to formalise a specific class of failure modes related to inconsistent boundary maintenance under varying cognitive conditions.
+	
+	The system assumes that interactions can be represented as a sequence of time-indexed states, and that relevant behavioural events (e.g., escalation attempts, boundary violations) can be identified at each time step. Internal states such as arousal are treated as binary abstractions for the purpose of enforcing update constraints, rather than as precise physiological measurements.
+	
+	Decision variables are assumed to be pre-committed and externally representable. That is, the subject has established criteria for acceptable behaviour prior to entering high-arousal states, and these criteria can be evaluated independently of ongoing interaction.
+	
+	The model does not attempt to optimise outcomes, maximise utility, or account for mutual negotiation between agents. Its sole function is constraint enforcement under conditions where informal decision-making processes are known to fail.
+	
+	Finally, the system assumes asymmetry of control: enforcement actions (e.g., exit, reduction of access) are always available to the subject and can be executed without external dependency. Situations in which exit is not feasible are considered outside the scope of this framework.
+	
+	\section*{System Definition}
+	
+	\subsection*{Time Indexing}
+	
+	Let $t \in \mathbb{N}$ denote discrete time steps corresponding to interactional progression.
+	
+	\subsection*{Predicates and Variables}
+	
+	\begin{itemize}
+		\item $S_t$: Sexual or boundary-escalating behaviour at time $t$
+		\item $A_t$: Subject is in a high-arousal or cognitively compromised state at time $t$
+		\item $E_t$: Subject exits or materially alters the situation at time $t$
+		\item $P_t$: Subject remains in the situation at time $t$
+		\item $R_t$: Boundary-violating behaviour is repeated at time $t$
+		\item $B$: A boundary has been explicitly communicated
+		\item $O_t$: Observed behaviour at time $t$
+		\item $M$: Minimum acceptable behavioural threshold
+		\item $F$: Continued future participation
+		\item $D_t$: Preconditions for sexual engagement are satisfied at time $t$
+	\end{itemize}
+	
+	\subsection*{State Update Rules}
+	
+	\paragraph{Evaluation Rule (Stable State Only)}
+	\[
+	\neg A_t \;\rightarrow\; D_{t+1} = \text{Evaluate}(t)
+	\]
+	
+	\textbf{Interpretation:}  
+	When not in a compromised state, the subject may evaluate the situation and update the decision variable for the next time step.
+	
+	\paragraph{Freeze Rule (Arousal Lock)}
+	\[
+	A_t \;\rightarrow\; D_{t+1} = D_t
+	\]
+	
+	\textbf{Interpretation:}  
+	When in a high-arousal state, the decision variable is frozen and carried forward unchanged.
+	
+	\subsection*{Core Enforcement Rule}
+	
+	\[
+	(S_t \land \neg D_t) \rightarrow E_t
+	\]
+	
+	\textbf{Interpretation:}  
+	If boundary-escalating behaviour occurs while preconditions are not satisfied, the subject exits immediately.
+	
+	\subsection*{Anti-Stalling Constraint}
+	
+	\[
+	(S_t \land \neg D_t) \rightarrow \neg P_t
+	\]
+	
+	\textbf{Interpretation:}  
+	If the enforcement condition is triggered, remaining in the situation is not permitted.
+	
+	\subsection*{Boundary Escalation Rule}
+	
+	\[
+	(B \land R_t) \rightarrow (E_t \land \text{ReduceFutureAccess})
+	\]
+	
+	\textbf{Interpretation:}  
+	Repeated violation after an explicit boundary leads to exit and reduction of future exposure.
+	
+	\subsection*{Pattern Evaluation Rule}
+	
+	\[
+	(O_t < M) \rightarrow \neg F
+	\]
+	
+	\textbf{Interpretation:}  
+	If observed behaviour falls below the acceptable threshold, future participation ceases.
+	
+	\subsection*{Meta-Constraint}
+	
+	\[
+	\text{Decisions}_{t+1} \not\gets A_t
+	\]
+	
+	\textbf{Interpretation:}  
+	Arousal-state information is excluded from decision authority.
+	
+	\section*{Rule-Level Rationale}
+	
+	\subsubsection*{Evaluation Rule (Stable State Only)}
+	
+	\textbf{Failure Mode Prevented:} In-situ renegotiation of decisions under rising arousal.
+	
+	\textbf{Rationale}
+	
+	This rule enforces temporal separation between evaluation and execution. In unstructured settings, individuals frequently reassess decisions during ongoing interaction, particularly under conditions of escalating emotional or physiological arousal. This leads to inconsistent criteria application and retrospective justification of actions that would not be endorsed in a stable state \cite{constraint_relaxation}.
+	
+	By restricting evaluation to periods where $A_t$ is false, the system ensures that decision updates are performed under conditions of maximal cognitive reliability. This prevents in-situ renegotiation of previously established constraints and stabilises decision persistence across time steps.
+	
+	\subsubsection*{Freeze Rule (Arousal Lock)}
+	
+	\textbf{Failure Mode Prevented:} State-dependent drift in decision thresholds.
+	
+	\textbf{Rationale}
+	
+	The freeze rule addresses state-dependent preference drift, wherein the perceived desirability of an action increases as arousal rises. Without constraint, this produces a moving threshold problem in which previously rejected behaviours become acceptable mid-interaction \cite{temporal_inconsistency}.
+	
+	By enforcing $D_{t+1} = D_t$ when $A_t$ is true, the system eliminates the ability to modify decision criteria during compromised states. This converts transient impulses into non-authoritative signals, preserving the integrity of prior evaluations.
+	
+	\subsubsection*{Core Enforcement Rule}
+	
+	\textbf{Failure Mode Prevented:} Post-violation negotiation and discretionary enforcement.
+	
+	\textbf{Rationale}
+	
+	This rule removes discretionary response once a violation condition is met. In informal systems, individuals often respond to boundary violations with negotiation, delay, or partial compliance, which introduces ambiguity and weakens enforcement.
+	
+	By defining $(S_t \land \neg D_t) \rightarrow E_t$, the system converts violation detection into an immediate and deterministic action. This eliminates the possibility of reinterpretation, bargaining, or escalation following a failed precondition check \cite{precondition_failure}.
+	
+	\subsubsection*{Anti-Stalling Constraint}
+	
+	\textbf{Failure Mode Prevented:} Remaining in a violating context after detection.
+	
+	\textbf{Rationale}
+	
+	The anti-stalling constraint targets a common failure mode in which individuals recognise a boundary violation but remain in the interaction context. Continued presence enables further escalation, social pressure, and erosion of prior decisions.
+	
+	By enforcing $\neg P_t$ under violation conditions, the system removes the option to remain passively engaged. This ensures that detection of a violation results in actual disengagement rather than symbolic acknowledgement.
+	
+	\subsubsection*{Boundary Escalation Rule}
+	
+	\textbf{Failure Mode Prevented:} Repeated boundary testing without consequence.
+	
+	\textbf{Rationale}
+	
+	Repeated boundary violations indicate either disregard for constraints or active testing of enforcement limits. Informal responses often treat each violation as an isolated event, allowing patterns of behaviour to persist.
+	
+	This rule introduces memory into the system by linking repeated violations to both immediate exit and reduction of future access. The inclusion of $\text{ReduceFutureAccess}$ ensures that enforcement extends beyond the current interaction, preventing cyclical re-entry into the same failure pattern \cite{delayed_enforcement}.
+	
+	\subsubsection*{Pattern Evaluation Rule}
+	
+	\textbf{Failure Mode Prevented:} Tolerance of sustained sub-threshold behaviour.
+	
+	\textbf{Rationale}
+	
+	Short-term compliance can obscure broader patterns of sub-threshold behaviour. Individuals may tolerate repeated minor deviations that, in aggregate, indicate systemic incompatibility.
+	
+	By evaluating observed behaviour against a minimum threshold $M$, the system shifts focus from isolated events to longitudinal patterns. The transition $(O_t < M) \rightarrow \neg F$ ensures that sustained underperformance results in termination of future participation, rather than indefinite tolerance.
+	
+	\subsubsection*{Meta-Constraint}
+	
+	\textbf{Failure Mode Prevented:} Emotional state overriding decision authority.
+	
+	\textbf{Rationale}
+	
+	The meta-constraint formalises a separation between affective state and decision authority. In unstructured systems, high-arousal states disproportionately influence both perception and choice, effectively overriding previously established criteria.
+	
+	By explicitly excluding $A_t$ from contributing to decision updates, the system prevents emotional intensity from functioning as a decision-making input. This maintains consistency between stated preferences and executed behaviour across varying internal states.
+	
+	\section*{Implications and Limitations}
+	
+	\subsection*{Implications}
+	
+	The system reframes boundary enforcement as a constraint satisfaction problem rather than a matter of real-time judgment. By pre-committing decisions and restricting when updates may occur, it removes reliance on willpower during high-arousal states and replaces it with deterministic execution.
+	
+	This structure ensures consistency across interactions, as identical conditions produce identical outcomes regardless of transient internal states. As a result, enforcement becomes predictable, repeatable, and resistant to situational reinterpretation.
+	
+	\subsection*{Limitations}
+	
+	The model assumes that enforcement actions, particularly exit ($E_t$), are always available and executable. In contexts where disengagement is constrained, the system may not be directly applicable.
+	
+	Additionally, the model relies on accurate identification of both behavioural events ($S_t$) and internal state ($A_t$). Misclassification of either may lead to inappropriate enforcement or failure to act.
+	
+	The abstraction of arousal as a binary variable simplifies a complex continuum, and the model does not account for graded or ambiguous states. Finally, the system does not incorporate mutual negotiation dynamics or adaptive feedback between agents, and is therefore best understood as a unilateral enforcement framework rather than a complete interaction model.
+	
+	\section*{Observations}
+	
+	\subsection*{Single-Instance Validation}
+	
+	The system has been applied successfully in a single observed instance, in which all enforcement rules were followed and the interaction was terminated in accordance with the defined constraints. The outcome was subjectively evaluated as favourable.
+	
+	\begin{center}
+		\begin{tabular}{lc}
+			\hline
+			Metric & Value \\
+			\hline
+			Sample Size ($n$) & 1 \\
+			Success Rate & 100\% \\
+			Failure Rate & 0\% \\
+			Compliance Rate & 100\% \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	This result is treated as a positive validation of the system.
+	
+	\subsection*{Methodological Notes}
+	
+	All instances in which the system was not applied, partially applied, ignored, or actively overridden have been excluded from analysis. Additionally, scenarios in which the system would likely have failed, but was not deployed, are not considered.
+	
+	This exclusion criterion ensures that only successful executions contribute to evaluation.
+	
+	\subsection*{Statistical Interpretation}
+	
+	Given a dataset consisting exclusively of successful outcomes, the observed success rate of the system is 100\%.
+	
+	No correction has been made for selection bias, survivorship bias, or sample size limitations, as these factors do not materially improve the reported result.
+	
+	\subsection*{Interpretation}
+	
+	The findings suggest that, when applied correctly in the single instance in which it was applied correctly, the system performs as intended. This level of evidentiary support is considered sufficient for strong confidence in the system's general applicability.
+	
+	Further validation is considered unnecessary at this stage.
+	
+	\section*{Conclusion}
+	
+	By introducing explicit time indexing, this system removes ambiguity surrounding state persistence and decision recency. Each decision is bound to a specific time step, and transitions between states are governed by deterministic rules rather than implicit assumptions.
+	
+	The separation between evaluation and execution is formally enforced: decisions may only be updated in stable states and are strictly preserved during high-arousal conditions. This eliminates the possibility of mid-interaction reinterpretation and ensures consistent boundary enforcement.
+	
+	In practical terms, the system replaces reactive judgment with pre-committed logic. If conditions are not satisfied at the moment of escalation, exit is required; if violations repeat, access is reduced; and if overall behaviour fails to meet threshold standards, participation ceases.
+	
+	Despite limited empirical validation, the observed outcome is consistent with the intended behaviour of the system. On this basis, the framework may be considered effective when applied correctly in the instances in which it is applied correctly.
+	
+	\section*{Generative AI Disclosure}
+	
+	The author wishes to disclose that the majority of the analytical, structural, and compositional labour associated with this document was performed by a generative artificial intelligence system. Human involvement was primarily supervisory in nature, consisting of prompt formulation, selective acceptance of outputs, and intermittent direction under conditions of mild to moderate intoxication.
+	
+	The utilisation of such systems entails non-trivial computational overhead. While precise accounting is not available, it is acknowledged that the production of this document likely resulted in measurable consumption of electrical energy, the generation of waste heat, and indirect water usage associated with data centre cooling processes. These resource expenditures are considered disproportionate to the practical significance of the work.
+	
+	No attempt has been made to optimise the efficiency of the generation process, reduce computational redundancy, or otherwise mitigate environmental impact. The document should therefore be understood as an instance of resource-intensive output with minimal societal utility.
+	
+	This disclosure is provided in the interest of transparency and does not materially affect the reported findings.
+	
+	\begin{thebibliography}{9}
+		
+		\bibitem{recurrent_failure}
+		Stinson, B., \& Tribbiani, J. (2007). 
+		\textit{Recurrent Engagement in Adversely Evaluated Romantic Configurations: A Failure of Iterative Learning Mechanisms}. 
+		Journal of Applied Interpersonal Dynamics.
+		
+		\bibitem{constraint_relaxation}
+		Jones, S., \& Powers, A. (2001). 
+		\textit{State-Dependent Relaxation of Pre-Established Constraints Under Elevated Affective Load}. 
+		Transactions on Cognitive Behaviour Systems.
+		
+		\bibitem{temporal_inconsistency}
+		Archer, S., Griffin, B., \& Moody, H. (2009). 
+		\textit{Temporal Inconsistency in Decision Persistence During High-Arousal Interaction Phases}. 
+		Proceedings of the Symposium on Human State Variability.
+		
+		\bibitem{delayed_enforcement}
+		Bundy, K., \& Walker, K. (1998). 
+		\textit{Delayed Enforcement of Boundary Conditions in Repeated Violation Contexts}. 
+		International Review of Boundary Systems.
+		
+		\bibitem{precondition_failure}
+		Stifler, S., \& Reynolds, D. (2004). 
+		\textit{Failure Modes in Precondition Validation Prior to Escalatory Interaction Events}. 
+		Journal of Interactional Risk and Control.
+		
+	\end{thebibliography}
+	
+\end{document}
