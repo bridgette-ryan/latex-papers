@@ -1,0 +1,81 @@
+name: Build LaTeX and Publish Latest Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # required for pushing tags & releases
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed .tex files
+        id: changed-files
+        run: |
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.tex$' > tex_files.txt || true
+          echo "Changed TeX files:"
+          cat tex_files.txt
+
+      - name: Install LaTeX (TeX Live)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-full
+
+      - name: Compile and update release per file
+        run: |
+          while read file; do
+            [ -z "$file" ] && continue
+
+            echo "=============================="
+            echo "Processing $file"
+
+            filename=$(basename "$file" .tex)
+
+            # Tag: replace underscores with hyphens
+            tag=$(echo "$filename" | tr '_' '-' | sed 's/--*/-/g; s/^-//; s/-$//')
+
+            echo "Tag: $tag"
+
+            # Compile LaTeX (basic pass — extend if needed)
+            pdflatex -interaction=nonstopmode "$file" || true
+            pdflatex -interaction=nonstopmode "$file" || true
+
+            pdf="${filename}.pdf"
+
+            if [ ! -f "$pdf" ]; then
+              echo "❌ PDF not generated for $file"
+              exit 1
+            fi
+
+            echo "✅ PDF built: $pdf"
+
+            # Configure git
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+
+            # Force update tag
+            git tag -f "$tag"
+            git push origin "$tag" --force
+
+            # Delete existing release (if exists)
+            gh release delete "$tag" --yes || true
+
+            # Recreate release with updated PDF
+            gh release create "$tag" "$pdf" \
+              --title "$filename" \
+              --notes "Latest build from $file"
+
+            echo "🚀 Release updated for $tag"
+
+          done < tex_files.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
